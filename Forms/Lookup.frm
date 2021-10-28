@@ -72,7 +72,7 @@ Private Sub OkButton_Click()
     
     'Replace any _ for 0
     
-    fnd = "—"
+    fnd = "â€”"
     rplc = 0
     
     Book1.Sheets("Sales Tracker").Cells.Replace what:=fnd, replacement:=rplc, _
