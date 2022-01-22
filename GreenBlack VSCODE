@@ -1,0 +1,41 @@
+//Place your settings here 
+
+
+    {"workbench.colorCustomizations" :
+      {
+       "[Green On Black]": {
+        "editor.foreground": "#00FF00",
+        "sideBar.border": "#1900ff",
+        "activityBar.foreground": "#ffffff",
+        "activityBar.background": "#494949",
+        "sideBar.background": "#181818",
+        "sideBar.foreground": "#ffffff",
+        "sideBarTitle.foreground": "#ffffff",
+        "sideBarSectionHeader.background": "#000000",
+        "editorLineNumber.foreground": "#ff0000",
+        "editorLineNumber.activeForeground": "#d9ff00",
+        "editorSuggestWidget.selectedBackground": "#ffffff",
+        "editorSuggestWidget.focusHighlightForeground": "#ff0000",
+        "tab.inactiveForeground": "#ffffffcc",
+        "tab.hoverBackground": "#a201ff",
+        "tab.hoverForeground": "#ffffff",
+        "tab.inactiveBackground": "#7700ff91",
+        "quickInput.background": "#003849",
+        "quickInput.foreground": "#ffffff"
+   
+       }
+      }
+    
+      ,"editor.tokenColorCustomizations":{
+        "[Green On Black]":
+        {
+        "comments": "#b3b3b3",
+        "keywords": {"foreground": "#ffffff"},
+        "numbers": "#00FF00",
+        "strings": "#00FF00",
+        "variables": "#00FF00",
+        "functions": "#00FF00",
+        }
+},
+"workbench.colorTheme": "Green On Black"
+      }
