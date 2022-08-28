@@ -1,0 +1,176 @@
+Private lastPrj As Range
+
+
+Private Sub AddCol_Click()
+             
+'add a column or not
+
+RowNum
+
+Sheets("Input").Unprotect Password:="1989"   'does this work? yes
+               'prompting for response
+                    
+               'check if project name is empty and that column is > 5
+          
+               
+c = ThisWorkbook.Worksheets("Input").Cells(1, Columns.Count).End(xlToLeft).Column
+               
+ThisWorkbook.Worksheets("OneCol").Columns(1).Copy ThisWorkbook.Worksheets("Input").Cells(1, c + 1)
+
+Sheets("Input").Protect Password:="1989"   'protect it back
+
+End Sub
+
+Private Sub CommandButton1_Click()
+
+Dim strng As String
+Dim lRow As Long
+Dim Nme As String, Code As String, FA As String
+Dim entry As Long
+Dim sht As Worksheet
+
+
+Set sht = ThisWorkbook.Worksheets("Input")
+
+With PrjDetailsLoad.ListBox1 '<--| refer to your listbox: change "ListBox1" with your actual listbox name
+    For lRow = 0 To .ListCount - 1 '<--| loop through listbox rows
+        If .Selected(lRow) Then '<--| if current row selected
+            
+                Code = .List(lRow, 0)  '<--| build your output string
+                Nme = .List(lRow, 1)
+                FA = .List(lRow, 2)
+       
+            Debug.Print Code & "----" & Nme '<--| show output string (after removing its last character ("|"))
+            
+            Exit For '<-_| exit loop
+            
+        End If
+    Next lRow
+End With
+
+prmpt = "Load these selections to data?" & vbCrLf & vbCrLf & _
+"• [Project Code] " & Code & vbCrLf & _
+"• [Project Name] " & Nme & vbCrLf & _
+"• [FA Number] " & FA
+ 
+
+ans = MsgBox(prmpt, vbYesNo + vbQuestion, Title:="Confirm to add")
+
+If ans = vbYes Then
+
+     With sht
+          entry = .Cells(3, Columns.Count).End(xlToLeft).Column
+          Debug.Print "column for prjcode " & entry
+          
+         
+         If IsEmpty(.Cells(3, entry).Value) = False Then
+               .Cells(3, entry).Offset(0, 1).Value = Code
+               .Cells(4, entry).Offset(0, 1).Value = Nme
+               .Cells(5, entry).Offset(0, 1).Value = FA
+               
+               
+          Else
+               .Cells(3, entry).Value = Code
+               .Cells(4, entry).Value = Nme
+               .Cells(5, entry).Value = FA
+              
+               
+               
+               Debug.Print "address " & lastCol
+               
+         
+          End If
+          
+          Unload Me
+     End With
+Else
+     Exit Sub
+End If
+
+End Sub
+'cancel button
+Private Sub CommandButton2_Click()
+
+Unload Me
+
+End Sub
+
+
+Private Sub CommandButton3_Click() 'refresh button
+
+'only works if enable background refresh is disabled
+MsgBox "Please wait for refreshing to complete", vbInformation
+
+ThisWorkbook.Worksheets("PrjList").ListObjects(1).QueryTable.Refresh 'listbojects.querytable allows .refreshing
+
+UserForm_Initialize
+
+End Sub
+
+Private Sub ListBox1_Click()
+
+End Sub
+
+Private Sub UserForm_Initialize()
+
+
+Dim iCount As Integer
+Dim dataArr As Variant
+Dim row_start, row_end As Long
+Dim col_start, col_end As Long
+
+
+Set prjs = ThisWorkbook.Worksheets("PrjList").ListObjects(1).DataBodyRange
+
+
+Me.ListBox1.ColumnCount = 3
+Me.ListBox1.ColumnWidths = "100, 350, 50"
+Me.ListBox1.MultiSelect = fmMultiSelectSingle
+
+row_start = LBound(prjs.Value2, 1)
+row_end = UBound(prjs.Value2, 1)
+
+'col_start = LBound(prjs.Value2, 2)
+'col_end = LBound(prjs.Value2, 2)
+
+dataArr = prjs 'whats this nonsense? assignign to datarr results in working????
+
+Me.ListBox1.List = dataArr
+
+Debug.Print ListBox1.ListCount
+
+
+
+End Sub
+
+Private Sub TextBox1_Change()
+  Const STARTROW = 2
+  Dim i&, iCnt&, r&, c&                                                       ' array counters for "rows" and "columns"
+  Dim sn, tmp                                                                 ' variant 2-dim 1-based arrays
+  With Sheets("PrjList")
+      iCnt = .Range("A" & Rows.Count).End(xlUp).Row - STARTROW + 1            ' items counter
+      ReDim sn(1 To iCnt, 1 To 13)                                            ' provide for filtered data array
+      For i = 1 To iCnt
+         'assign current data row to 2-dim 1-based temporary array
+          tmp = .Range("A" & (i + 2) & ":F" & (i + 2))                        ' current data row (c.f. OP)
+         'compare search string with concatenated data string from current row
+          If InStr(1, UCase(Concat(tmp)), UCase(TextBox1.Text)) > 0 Then                    ' check occurrence e.g. via Instr
+              r = r + 1                                                       ' new rows counter
+              For c = 1 To UBound(tmp, 2)                                     ' col counter
+                  sn(r, c) = tmp(1, c)                                        ' collect found row data
+              Next
+          End If
+      Next
+      ListBox1.List = sn                                                      ' assign array to .List property
+  End With
+
+End Sub
+
+
+Private Function Concat(ByVal arr, Optional ByVal delim$ = " ") As String
+' Purpose: build string from 2-dim array row, delimited by 2nd argument
+' Note:    concatenation via JOIN needs a "flat" 1-dim array via double transposition
+  Concat = Join(Application.Transpose(Application.Transpose(arr)), delim)
+End Function
+
+
